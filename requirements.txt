@@ -1,0 +1,7 @@
+pandas
+pandas_gbq
+numpy
+streamlit
+streamlit_option_menu
+google-cloud-bigquery
+protobuf
