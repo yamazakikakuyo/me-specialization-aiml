@@ -5,22 +5,9 @@ from google.protobuf.struct_pb2 import Value
 import json
 
 PROJECT_ID = "me-specialization-aiml"
-TABLE_FORECAST_NAME = "one_month"
 
-### I use this when developing in local, it faster than developing in cloud run. So, comment these lines when deploying ###
-
-from google.oauth2 import service_account
-
-with open('me-specialization-aiml-4e0869c9218d.json') as source:
-    info = json.load(source)
-
-credentials = service_account.Credentials.from_service_account_info(info)
-client_bigquery = bigquery.Client(project=PROJECT_ID, location='asia-southeast2', credentials=credentials)
-aiplatform.init(project=PROJECT_ID, location='asia-southeast2', credentials=credentials)
-
-### Instead, use these lines when deploying in Cloud Run ###
-
-# client_bigquery = bigquery.Client(project=PROJECT_ID, location='asia-southeast2',)
+client_bigquery = bigquery.Client(project=PROJECT_ID, location='asia-southeast2')
+aiplatform.init(project=PROJECT_ID, location='asia-southeast2')
 
 def batch_prediction(
     project: str,
@@ -45,6 +32,7 @@ def batch_prediction(
     print(batch_prediction_job.display_name)
     print(batch_prediction_job.resource_name)
     print(batch_prediction_job.state)
+    print(batch_prediction_job.output_info)
     return batch_prediction_job
 
 def get_predicted_data(obj_batch_pred):
