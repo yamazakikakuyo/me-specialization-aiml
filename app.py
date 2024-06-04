@@ -54,13 +54,10 @@ col3, col4 = st.columns([1, 1])
 with st.spinner("Please wait around 10-15 minutes due many data"):
     with col3:
         generate_predict = st.button("Generate Prediction")
-        if st.session_state.result:
-            download_button = st.button("Download Data")
-
     if generate_predict:    
-            st.session_state.result = fc.run_prediction()
+        st.session_state.result = fc.run_prediction()
 
-if st.session_state.result != None:
+if type(st.session_state.result) != type(None):
     st.write("Data Bulan Desember 2016 untuk semua Produk")
     st.table(st.session_state.result.head(5))
     st.download_button(
