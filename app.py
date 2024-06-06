@@ -25,9 +25,6 @@ st.markdown(
         unsafe_allow_html=True,
     )
 
-if "result" not in st.session_state:
-    st.session_state.result = None
-
 # Initialize session state keys if they don't exist
 
 # Function to reset the success message and related state variables
@@ -50,18 +47,26 @@ st.success(
     "Forecast based on data you upload with ease!",
     icon="📈",
 )
-col3, col4 = st.columns([1, 1])
-with st.spinner("Please wait around 10-15 minutes due many data"):
-    with col3:
-        generate_predict = st.button("Generate Prediction")
-    if generate_predict:    
-        st.session_state.result = fc.run_prediction()
 
-if type(st.session_state.result) != type(None):
-    st.write("Data Bulan Desember 2016 untuk semua Produk")
-    st.table(st.session_state.result.head(5))
-    st.download_button(
-                "Download Prediction Data",
-                st.session_state.result.to_csv(index=False).encode("utf-8"), 
-                file_name=f"prediction_result.csv",
-                mime='text/csv')
+selected = option_menu(None, ["Prediction", "Result"], 
+    icons=['cloud-upload', "list-task"], 
+    menu_icon="cast", default_index=0, orientation="horizontal",
+)
+
+if selected == "Prediction":
+    generate_predict = st.button("Generate Prediction")
+    if generate_predict:
+        with st.spinner("Please wait around 10-15 minutes due many data"):   
+            st.session_state.result = fc.run_prediction()
+
+if selected == "Result":
+    prediction_result = st.button("Show Prediction Result")
+    if prediction_result:
+        st.write("5 Sample Data Bulan Desember 2016 untuk semua Produk")
+        result = fc.get_predicted_data()
+        st.table(result.head(5))
+        st.download_button(
+                    "Download Prediction Data",
+                    result.to_csv(index=False).encode("utf-8"), 
+                    file_name=f"prediction_result.csv",
+                    mime='text/csv')

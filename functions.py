@@ -2,12 +2,27 @@ from google.cloud import bigquery
 from google.cloud import aiplatform
 from google.protobuf import json_format
 from google.protobuf.struct_pb2 import Value
+import pandas as pd
+import numpy as np
 import json
 
 PROJECT_ID = "me-specialization-aiml"
+TABLE_FORECAST_NAME = "one_month"
 
-client_bigquery = bigquery.Client(project=PROJECT_ID, location='asia-southeast2')
-aiplatform.init(project=PROJECT_ID, location='asia-southeast2')
+### I use this when developing in local, it faster than developing in cloud run. So, comment these lines when deploying ###
+
+from google.oauth2 import service_account
+
+with open('me-specialization-aiml-4e0869c9218d.json') as source:
+    info = json.load(source)
+
+credentials = service_account.Credentials.from_service_account_info(info)
+client_bigquery = bigquery.Client(project=PROJECT_ID, location='asia-southeast2', credentials=credentials)
+aiplatform.init(project=PROJECT_ID, location='asia-southeast2', credentials=credentials)
+
+### Instead, use these lines when deploying in Cloud Run ###
+
+# client_bigquery = bigquery.Client(project=PROJECT_ID, location='asia-southeast2',)
 
 def batch_prediction(
     project: str,
@@ -35,25 +50,22 @@ def batch_prediction(
     print(batch_prediction_job.output_info)
     return batch_prediction_job
 
-def get_predicted_data(obj_batch_pred):
+def get_predicted_data():
     query = """
-    SELECT Product_Code, Month, Date, Predicted_Order_Demand
-    FROM `{}.{}`
-    """.format(
-        obj_batch_pred.output_info.bigquery_output_dataset, 
-        obj_batch_pred.output_info.bigquery_output_table
-    )
+    SELECT Product_Code, Month, Date, predicted_Order_Demand.value
+    FROM `me-specialization-aiml.demand_batch_forecast.predictions_2024_06_05T02_53_36_828Z_962`
+    """
 
     # Menjalankan query dan mengambil hasil
-    query_job = bigquery_client.query(query)
+    query_job = client_bigquery.query(query)
     results = query_job.result().to_dataframe()
 
     # Mengonversi kolom Date menjadi datetime dan menghilangkan waktu
     results['Date'] = pd.to_datetime(results['Date']).dt.date
 
     # Replace negative values in the 'Predicted_Order_Demand' column with 0
-    results['Predicted_Order_Demand'] = results['Predicted_Order_Demand'].apply(lambda x: max(x, 0) if np.issubdtype(type(x), np.number) else x)
-
+    results['Predicted_Order_Demand'] = results['value'].apply(lambda x: max(x, 0) if np.issubdtype(type(x), np.number) else x)
+    results = results.drop(columns=['value'])
     return results
 
 def run_prediction():
@@ -66,6 +78,6 @@ def run_prediction():
         bigquery_destination_prefix="bq://me-specialization-aiml.demand_batch_forecast",
     )
 
-    result = get_predicted_data(obj_batch_pred)
+    result = get_predicted_data()
 
     return result
