@@ -10,15 +10,8 @@ PROJECT_ID = "me-specialization-aiml"
 TABLE_FORECAST_NAME = "one_month"
 
 ### I use this when developing in local, it faster than developing in cloud run. So, comment these lines when deploying ###
-
-from google.oauth2 import service_account
-
-with open('me-specialization-aiml-4e0869c9218d.json') as source:
-    info = json.load(source)
-
-credentials = service_account.Credentials.from_service_account_info(info)
-client_bigquery = bigquery.Client(project=PROJECT_ID, location='asia-southeast2', credentials=credentials)
-aiplatform.init(project=PROJECT_ID, location='asia-southeast2', credentials=credentials)
+client_bigquery = bigquery.Client(project=PROJECT_ID, location='asia-southeast2')
+aiplatform.init(project=PROJECT_ID, location='asia-southeast2')
 
 ### Instead, use these lines when deploying in Cloud Run ###
 
