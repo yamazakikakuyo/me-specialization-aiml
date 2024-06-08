@@ -46,7 +46,7 @@ def batch_prediction(
 def get_predicted_data():
     query = """
     SELECT Product_Code, Month, Date, predicted_Order_Demand.value
-    FROM `me-specialization-aiml.demand_batch_forecast.predictions_2024_06_05T02_53_36_828Z_962`
+    FROM `me-specialization-aiml.demand_batch_forecast.predictions_2024_06_07T17_56_28_931Z_039`
     """
 
     # Menjalankan query dan mengambil hasil
