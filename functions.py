@@ -60,9 +60,9 @@ def get_predicted_data(result_option):
 def get_real_data(result_option):
     table_name = ''
     if result_option == "1 Month":
-        table_name = "dataset_testing"
+        table_name = "dataset_automl"
     else:
-        table_name = "dataset_testing_threemonth"
+        table_name = "dataset_automl_threemonth"
     query = """
     SELECT Product_Code, Month, Date, Order_Demand
     FROM `me-specialization-aiml.demand_dataset.{}`
