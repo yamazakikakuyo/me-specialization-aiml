@@ -128,3 +128,10 @@ def get_list_batch_prediction_job():
         })
 
     return pd.DataFrame(result, columns=["Creation Time", "Name", "Input", "Output", "State"])
+
+def get_evaluation_detail(result_type):
+    if result_type == "1 Month":
+        my_model = aiplatform.Model("577146847559155712")
+    else:
+        my_model = aiplatform.Model("2675542798937096192")
+    return my_model.get_model_evaluation().to_dict()['metrics']

@@ -90,6 +90,21 @@ if selected == "Result":
     
     if type(st.session_state.result) != type(None):
         st.write(f"5 Sample Prediction for {st.session_state.result_type}")
+        evaluation = fc.get_evaluation_detail(st.session_state.result_type)
+        with st.container(border=True):
+            st.write("**Evaluation Result**")
+            eval_col1, eval_col2, eval_col3, eval_col4 = st.columns([1,1,1,1])
+            with eval_col1:
+                st.write(f"RMSLE : {evaluation['rootMeanSquaredLogError']}")
+                st.write(f"RMSPE : {evaluation['rootMeanSquaredPercentageError']}")
+            with eval_col2:
+                st.write(f"MAPE : {evaluation['meanAbsolutePercentageError']}")
+                st.write(f"WAPE : {evaluation['weightedAbsolutePercentageError']}")
+            with eval_col3:
+                st.write(f"RMSE : {evaluation['rootMeanSquaredError']}")
+                st.write(f"R^2 : {evaluation['rSquared']}")
+            with eval_col4:
+                st.write(f"MAE : {evaluation['meanAbsoluteError']}")
         st.table(st.session_state.result.head(5))
         pred_option = st.selectbox(
             "How long you want to predict?",
