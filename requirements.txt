@@ -4,5 +4,4 @@ numpy
 streamlit
 streamlit_option_menu
 google-cloud-bigquery
-google-cloud-aiplatform
 protobuf
