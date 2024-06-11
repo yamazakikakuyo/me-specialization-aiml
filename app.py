@@ -5,6 +5,7 @@ import numpy as np
 import functions as fc
 import time
 import matplotlib.pyplot as plt
+import mpld3
 
 st.set_page_config(
     page_title="Stock Prediction AutoML",
