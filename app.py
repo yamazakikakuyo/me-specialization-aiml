@@ -117,14 +117,60 @@ if selected == "Result":
                     file_name=f"prediction_result.csv",
                     mime='text/csv')
         if generate_graph:
-            real_data = st.session_state.real_value[st.session_state.real_value['Product_Code'] == pred_option]
-            pred_data = st.session_state.result[st.session_state.result['Product_Code'] == pred_option].sort_values(by=["Date"])
-            real_data = real_data[~(real_data['Date'].isin(pred_data['Date']))].sort_values(by=["Date"])
-            plt.figure(figsize=(20, 5))
-            plt.plot(pd.concat([real_data['Date'], pred_data['Date']]), pd.concat([real_data['Order_Demand'], pred_data['Predicted_Order_Demand']]), label='Predicted Data', color='orange')
-            plt.plot(real_data['Date'], real_data['Order_Demand'], label='Real Data', color='blue')
-            plt.xlabel('Month')
-            plt.ylabel('Sales')
+            # plt.figure(figsize=(20, 5))
+            # plt.plot(pd.concat([real_data['Date'], pred_data['Date']]), pd.concat([real_data['Order_Demand'], pred_data['Predicted_Order_Demand']]), marker='o', label='Predicted Data', color='orange')
+            # plt.plot(real_data['Date'], real_data['Order_Demand'], marker='o', label='Real Data', color='blue')
+            # plt.xlabel('Month')
+            # plt.ylabel('Sales')
+            # plt.title(f'Prediction of {pred_option} for {st.session_state.result_type}')
+            # plt.grid()
+            # plt.legend()
+            # st.pyplot(plt)
+
+            fig = plt.figure(figsize=(15, 5))
+            plt.plot(pd.concat([real_data['Date'], pred_data['Date']]), pd.concat([real_data['Order_Demand'], pred_data['Predicted_Order_Demand']]), marker='o', label='Predicted Data', color='orange')
+            plt.plot(real_data['Date'], real_data['Order_Demand'], marker='o', label='Real Data', color='blue')
+            plt.xlabel('Date')
+            plt.ylabel('Order Demand')
             plt.title(f'Prediction of {pred_option} for {st.session_state.result_type}')
+            plt.grid()
             plt.legend()
-            st.pyplot(plt)
+            css = """
+            table
+            {
+            border-collapse: collapse;
+            }
+            th
+            {
+            color: #ffffff;
+            background-color: #000000;
+            }
+            td
+            {
+            background-color: #cccccc;
+            }
+            table, th, td
+            {
+            font-family:Arial, Helvetica, sans-serif;
+            border: 1px solid black;
+            text-align: right;
+            }
+            """
+            print(fig.axes[0].get_lines())
+            for axes in fig.axes:
+                for line in axes.get_lines():
+                    # get the x and y coords
+                    # print(line.get_xdata())
+                    xy_data = line.get_data()
+                    labels = []
+                    for x, y in list(zip(xy_data[0], xy_data[1])):
+                        # Create a label for each point with the x and y coords
+                        html_label = f'<table border="1" class="dataframe"> <thead> <tr style="text-align: right;"> </thead> <tbody> <tr> <th>Date</th> <td>{x.strftime("%d-%m-%Y")}</td> </tr> <tr> <th>Order Demand</th> <td>{y}</td> </tr> </tbody> </table>'
+                        labels.append(html_label)
+                    # Create the tooltip with the labels (x and y coords) and attach it to each line with the css specified
+                    tooltip = mpld3.plugins.PointHTMLTooltip(line, labels, css=css)
+                    # Since this is a separate plugin, you have to connect it
+                    mpld3.plugins.connect(fig, tooltip)
+            
+            fig_html = mpld3.fig_to_html(fig)
+            st.components.v1.html(fig_html, height=600)
