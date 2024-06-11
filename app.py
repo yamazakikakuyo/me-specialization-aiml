@@ -117,6 +117,10 @@ if selected == "Result":
                     file_name=f"prediction_result.csv",
                     mime='text/csv')
         if generate_graph:
+            real_data = st.session_state.real_value[st.session_state.real_value['Product_Code'] == pred_option]
+            pred_data = st.session_state.result[st.session_state.result['Product_Code'] == pred_option].sort_values(by=["Date"])
+            real_data = real_data[~(real_data['Date'].isin(pred_data['Date']))].sort_values(by=["Date"])
+            
             # plt.figure(figsize=(20, 5))
             # plt.plot(pd.concat([real_data['Date'], pred_data['Date']]), pd.concat([real_data['Order_Demand'], pred_data['Predicted_Order_Demand']]), marker='o', label='Predicted Data', color='orange')
             # plt.plot(real_data['Date'], real_data['Order_Demand'], marker='o', label='Real Data', color='blue')
