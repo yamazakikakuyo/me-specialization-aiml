@@ -6,10 +6,10 @@ In this project, we aim to predict product demand for a manufacturing company wi
 ## WebApp: 
 > Link: https://batch-prediction-fbhrrojzua-et.a.run.app
 ----
-![](Wwebappgif1.gif)
-
-![](Wwebappgif2.gif)
-
+![](webappgif1.gif)
+----
+![](webappgif2.gif)
+----
 ## Introduction
 In term of product demands, it is a common things that a company provides thousands of products within dozens of product categories. There are also some central warehouses to ship products within the region it is responsible for. Since the products are manufactured in different locations all over the world, it normally takes more than one month to ship products via ocean to different central warehouses. If forecasts for each product in different central with reasonable accuracy for the monthly demand for month after next can be achieved, it would be beneficial to the company in multiple ways. Machine learning (ML) offers a solution to solve this problem, by enabling forecasting product demand, company could take first step ahead to distribute product evenly. In this project, a Product Demand dataset was analyzed using ML regression models, with the aim of predicting individual product demands. Powered by AutoML in Vertex AI and Time series Dense Encoder (TiDE) algorithm, regression model built with good performance values to predict product demans. This model holds significant promise for businesses looking to optimize their providing peoduct based on product demand and strategies during shipping product throughout warehouses of the company.
 
