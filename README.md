@@ -1,4 +1,4 @@
-# Google Cloud End-to-End Machine Learning Using Black Friday Dataset to Predict Customer Purchase
+# Google Cloud End-to-End Machine Learning Using Product Demand Dataset to Predict Customer Demand
 
 ## Overview:
 In this project, we aim to predict product demand for a manufacturing company with footprints globally. We will follow all the steps of a Data Science lifecycle, from data collection to model deployment.
