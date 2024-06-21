@@ -8,7 +8,8 @@ import json
 from datetime import datetime
 
 PROJECT_ID = "me-specialization-aiml"
-LOCATION_ID = "asia-southeast2"
+LOCATION_ID = "us-central1"
+LOCATION_ID_2 = "US"
 
 client_bigquery = bigquery.Client(project=PROJECT_ID, location=LOCATION_ID)
 aiplatform.init(project=PROJECT_ID, location=LOCATION_ID)
@@ -36,16 +37,18 @@ def batch_prediction(
 
 def get_predicted_data(result_option):
     table_name = ''
-    if result_option == "1 Month":
-        table_name = "predictions_2024_06_07T17_56_28_931Z_039"
+    # if result_option == "1 Month":
+    if result_option == "With Feature Engineering":
+        table_name = "predictions_2024_06_20T06_39_18_417Z_905"
     else:
-        table_name = "predictions_2024_06_08T05_34_44_747Z_462"
+        table_name = "predictions_2024_06_20T06_37_20_017Z_768"
     query = """
-    SELECT Product_Code, Month, Date, predicted_Order_Demand.value
-    FROM `me-specialization-aiml.demand_batch_forecast.{}`
+    SELECT Product_Code, Date, predicted_Order_Demand.value
+    FROM `me-specialization-aiml.output_batch_predict.{}`
     """.format(table_name)
 
     # Menjalankan query dan mengambil hasil
+    client_bigquery = bigquery.Client(project=PROJECT_ID, location=LOCATION_ID)
     query_job = client_bigquery.query(query)
     results = query_job.result().to_dataframe()
 
@@ -59,16 +62,17 @@ def get_predicted_data(result_option):
 
 def get_real_data(result_option):
     table_name = ''
-    if result_option == "1 Month":
+    if result_option == "With Feature Engineering":
         table_name = "dataset_automl"
     else:
-        table_name = "dataset_automl_threemonth"
+        table_name = "fe_dataset_automl"
     query = """
-    SELECT Product_Code, Month, Date, Order_Demand
+    SELECT Product_Code, Date, Order_Demand
     FROM `me-specialization-aiml.demand_dataset.{}`
     """.format(table_name)
 
     # Menjalankan query dan mengambil hasil
+    client_bigquery = bigquery.Client(project=PROJECT_ID, location=LOCATION_ID_2)
     query_job = client_bigquery.query(query)
     results = query_job.result().to_dataframe()
 
@@ -78,23 +82,23 @@ def get_real_data(result_option):
     return results
 
 def run_prediction(pred_option):
-    if pred_option == "1 Month":
+    if pred_option == "With Feature Engineering":
         obj_batch_pred = batch_prediction(
             project=PROJECT_ID,
             location=LOCATION_ID,
-            model_resource_name="577146847559155712",
-            job_display_name="monthly_demand_forecast_1_month",
-            bigquery_source="bq://me-specialization-aiml.demand_dataset.dataset_testing",
-            bigquery_destination_prefix="bq://me-specialization-aiml.demand_batch_forecast",
+            model_resource_name="8557834350027079680",
+            job_display_name="fe_demand_forecast_1_month",
+            bigquery_source="bq://me-specialization-aiml.demand_dataset_2.dataset_testing",
+            bigquery_destination_prefix="bq://me-specialization-aiml.output_batch_predict",
         )
     else:
         obj_batch_pred = batch_prediction(
             project=PROJECT_ID,
             location=LOCATION_ID,
-            model_resource_name="2675542798937096192",
-            job_display_name="monthly_demand_forecast_3_months",
-            bigquery_source="bq://me-specialization-aiml.demand_dataset.dataset_testing_threemonth",
-            bigquery_destination_prefix="bq://me-specialization-aiml.demand_batch_forecast",
+            model_resource_name="5911969568946913280",
+            job_display_name="demand_forecast_1_months",
+            bigquery_source="bq://me-specialization-aiml.demand_dataset_2.fe_dataset_testing",
+            bigquery_destination_prefix="bq://me-specialization-aiml.output_batch_predict",
         )
 
 def get_list_batch_prediction_job():
@@ -130,8 +134,8 @@ def get_list_batch_prediction_job():
     return pd.DataFrame(result, columns=["Creation Time", "Name", "Input", "Output", "State"])
 
 def get_evaluation_detail(result_type):
-    if result_type == "1 Month":
-        my_model = aiplatform.Model("577146847559155712")
+    if result_type == "With Feature Engineering":
+        my_model = aiplatform.Model("8557834350027079680")
     else:
-        my_model = aiplatform.Model("2675542798937096192")
+        my_model = aiplatform.Model("5911969568946913280")
     return my_model.get_model_evaluation().to_dict()['metrics']

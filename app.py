@@ -69,8 +69,9 @@ selected = option_menu(None, ["Prediction", "Result"],
 
 if selected == "Prediction":
     pred_option = st.selectbox(
-        "How long you want to predict?",
-        ("1 Month", "3 Months")
+        "What kind of prediction?",
+        # ("1 Month", "3 Months")
+        ("With Feature Engineering", "Without Feature Engineering")
     )
     generate_predict = st.button("Generate Prediction")
     if generate_predict: 
@@ -79,8 +80,9 @@ if selected == "Prediction":
 
 if selected == "Result":
     result_option = st.selectbox(
-        "How long you want to predict?",
-        ("1 Month", "3 Months")
+        "What kind of prediction?",
+        # ("1 Month", "3 Months")
+        ("With Feature Engineering", "Without Feature Engineering")
     )
     prediction_result = st.button("Show Prediction Result")
     if prediction_result:
@@ -94,17 +96,18 @@ if selected == "Result":
         evaluation = fc.get_evaluation_detail(st.session_state.result_type)
         with st.container(border=True):
             st.write("**Evaluation Result**")
-            eval_col1, eval_col2, eval_col3, eval_col4 = st.columns([1,1,1,1])
+            eval_col1, eval_col2, eval_col3 = st.columns([1,1,1])
+            # with eval_col1:
+            #     st.write(f"RMSLE : {evaluation['rootMeanSquaredLogError']}")
+            #     st.write(f"RMSPE : {evaluation['rootMeanSquaredPercentageError']}")
+            # with eval_col2:
+            #     st.write(f"MAPE : {evaluation['meanAbsolutePercentageError']}")
+            #     st.write(f"WAPE : {evaluation['weightedAbsolutePercentageError']}")
             with eval_col1:
-                st.write(f"RMSLE : {evaluation['rootMeanSquaredLogError']}")
-                st.write(f"RMSPE : {evaluation['rootMeanSquaredPercentageError']}")
-            with eval_col2:
-                st.write(f"MAPE : {evaluation['meanAbsolutePercentageError']}")
-                st.write(f"WAPE : {evaluation['weightedAbsolutePercentageError']}")
-            with eval_col3:
                 st.write(f"RMSE : {evaluation['rootMeanSquaredError']}")
+            with eval_col2:
                 st.write(f"R^2 : {evaluation['rSquared']}")
-            with eval_col4:
+            with eval_col3:
                 st.write(f"MAE : {evaluation['meanAbsoluteError']}")
         st.table(st.session_state.result.head(5))
         pred_option = st.selectbox(
